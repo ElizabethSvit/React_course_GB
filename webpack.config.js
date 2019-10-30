@@ -18,8 +18,20 @@ module.exports = {
                 exclude: /node_modules/,
                 query: {
                     presets: ['@babel/env', '@babel/react'],
+                    plugins: [
+                        [
+                            "@babel/plugin-proposal-class-properties",
+                            {
+                                "loose": true
+                            }
+                        ]
+                    ]
                 }
             },
         ],
+    },
+    resolve: {
+        modules: [`${__dirname}/static_src`, 'node_modules'],
+        extensions: ['.js', '.jsx'],
     },
 };
