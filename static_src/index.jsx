@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/MessageField';
+import Layout from './components/Layout'
+
 
 ReactDOM.render(
-    <App />,
+    <Layout />,
     document.getElementById('root'),
 );
