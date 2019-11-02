@@ -12,11 +12,17 @@
   "dependencies": {
     "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-react": "^7.6.3",
+    "@material/list": "^3.2.0",
     "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "material-ui": "^0.20.2",
+    "prop-types": "^15.7.2",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
+    "style-loader": "^1.0.0",
     "webpack": "^4.41.2"
   },
   "devDependencies": {
