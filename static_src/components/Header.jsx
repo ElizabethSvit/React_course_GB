@@ -1,9 +1,24 @@
 import React from "react";
+import PropTypes from "prop-types";
+import {Link} from "react-router-dom";
 
 export default class Header extends React.Component {
+    static propTypes = {
+        chatId: PropTypes.number,
+    };
+
+    static defaultProps = {
+        chatId: 1,
+    };
+
     render() {
-        return <div style={{width: '100%', height: '40px', border: '1px solid black'}}>
-            <h3>Chat</h3>
-        </div>
+        return (
+            <div className="header">
+                <span className="header-info">
+                    <p>Чат { this.props.chatId }</p>
+                    <p><Link to="/profile/">Профиль</Link></p>
+                </span>
+            </div>
+        )
     }
 }
