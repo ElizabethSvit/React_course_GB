@@ -1,13 +1,14 @@
-import MessageField from './MessageField'
-import ChatList from './ChatList'
-import Header from './Header'
-import React from "react";
+import React from 'react';
 import PropTypes from "prop-types";
-import '../styles/styles.css';
+import MessageField from './MessageField';
+import ChatList from './ChatList';
+import Header from './Header';
+import '../styles/layout.css';
+
 
 export default class Layout extends React.Component {
     static propTypes = {
-        chatId: PropTypes.number.isRequired,
+        chatId: PropTypes.number,
     };
 
     static defaultProps = {
@@ -24,7 +25,16 @@ export default class Layout extends React.Component {
             1: { text: "Привет!", sender: 'bot' },
             2: { text: "Здравствуйте!", sender: 'bot' },
         },
-        input: '',
+    };
+
+    addChat = (title) => {
+        const { chats } = this.state;
+
+        const chatId = Object.keys(chats).length + 1;
+        this.setState({
+            chats: {...chats,
+                [chatId]: {title: title, messageList: []}},
+        })
     };
 
     componentDidUpdate(prevProps, prevState) {
@@ -32,61 +42,28 @@ export default class Layout extends React.Component {
         if (Object.keys(prevState.messages).length < Object.keys(messages).length &&
             Object.values(messages)[Object.values(messages).length - 1].sender === 'me') {
             setTimeout(() =>
-                this.handleSendMessage('ama robot', 'bot'), 1000);
+                this.sendMessage('Не приставай ко мне, я робот!', 'bot'), 1000);
         }
     }
 
-    handleSendMessage = (message, sender) => {
-        const { messages, chats, input } = this.state;
+    sendMessage = (message, sender) => {
+        const { messages, chats } = this.state;
         const { chatId } = this.props;
 
-        if (input.length > 0 || sender === 'bot') {
-            const messageId = Object.keys(messages).length + 1;
-            this.setState({
-                messages: {...messages,
-                    [messageId]: {text: message, sender: sender}},
-                chats: {...chats,
-                    [chatId]: { ...chats[chatId],
-                        messageList: [...chats[chatId]['messageList'], messageId]
-                    }
-                },
-            })
-        }
-        if (sender === 'me') {
-            this.setState({ input: '' })
-        }
-    };
-
-    handleChange = (event) => {
-        this.setState({[event.target.name]: event.target.value});
-    };
-
-    handleKeyUp = (event, message) => {
-        if (event.keyCode === 13) { // Enter
-            this.sendMessage(message)
-        }
-    };
-
-    sendMessage = (message) => {
+        const messageId = Object.keys(messages).length + 1;
         this.setState({
-            messages: [...this.state.messages, {text: message, sender: 'me'}],
-        });
-    };
-
-    addChat = () => {
-        const chatsLength = Object.keys(this.state.chats).length + 1;
-        this.setState({
-            chats: {...this.state.chats,
-                [chatsLength]: {
-                    title: `Чат ${chatsLength}`,
-                    messageList: []
+            messages: {...messages,
+                [messageId]: {text: message, sender: sender}},
+            chats: {...chats,
+                [chatId]: { ...chats[chatId],
+                    messageList: [...chats[chatId]['messageList'], messageId]
                 }
-            }
-        });
+            },
+        })
     };
 
     render() {
-        return <div>
+        return (
             <div className="layout">
                 <Header chatId={ this.props.chatId } />
                 <div className="layout-canvas">
@@ -99,16 +76,13 @@ export default class Layout extends React.Component {
                     <div className="layout-right-side">
                         <MessageField
                             chatId={ this.props.chatId }
-                            messages={this.state.messages}
                             chats={ this.state.chats }
-                            input={ this.state.input }
-                            handleSendMessage={ this.handleSendMessage }
-                            handleChange={ this.handleChange }
-                            handleKeyUp={ this.handleKeyUp }
+                            messages={ this.state.messages }
+                            sendMessage={ this.sendMessage }
                         />
                     </div>
                 </div>
             </div>
-        </div>
+        )
     }
 }
