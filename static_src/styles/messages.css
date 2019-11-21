@@ -1,0 +1,15 @@
+.message-field {
+    display: flex;
+    flex-direction: column;
+    background-color: #e2e2e2;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+.message-sender {
+color: gray;
+font-size: 14px;
+}
