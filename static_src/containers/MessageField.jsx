@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
+import connect from "react-redux/es/connect/connect";
 import { TextField, FloatingActionButton } from 'material-ui';
 import SendIcon from 'material-ui/svg-icons/content/send';
 import Message from '../components/Message';
+import { sendMessage, loadMessages } from '../actions/messageActions';
 import '../styles/messages.css';
-import { bindActionCreators } from "redux";
-import connect from "react-redux/es/connect/connect";
+import CircularProgress from 'material-ui/CircularProgress';
+import { loadChats } from '../actions/chatActions';
 
 class MessageField extends React.Component {
     static propTypes = {
@@ -13,6 +16,8 @@ class MessageField extends React.Component {
         messages: PropTypes.object.isRequired,
         chats: PropTypes.object.isRequired,
         sendMessage: PropTypes.func.isRequired,
+        isLoading: PropTypes.bool.isRequired,
+
     };
 
     state = {
@@ -20,8 +25,12 @@ class MessageField extends React.Component {
     };
 
     handleSendMessage = (message, sender) => {
+        const { chatId, messages } = this.props;
+
+        const messageId = Object.keys(messages).length + 1;
+
         if (this.state.input.length > 0 || sender === 'bot') {
-            this.props.sendMessage(message, sender);
+            this.props.sendMessage(messageId, message, sender, chatId);
         }
         if (sender === 'me') {
             this.setState({ input: '' });
@@ -37,6 +46,20 @@ class MessageField extends React.Component {
             this.handleSendMessage(this.state.input, 'me');
         }
     };
+
+    componentDidMount() {
+        this.props.loadChats();
+
+        fetch('/api/messages.json'
+        ).then(body => body.json()).
+        then(json => {
+            json.forEach(msg => {
+                this.props.sendMessage(msg.id, msg.text, msg.sender, msg.chatId);
+            })
+        });
+        this.props.loadMessages();
+    }
+
 
     render() {
         const { chatId, messages, chats } = this.props;
@@ -71,10 +94,12 @@ class MessageField extends React.Component {
     }
 }
 
-const mapStateToProps = ({ chatReducer }) => ({
+const mapStateToProps = ({ chatReducer, messageReducer }) => ({
     chats: chatReducer.chats,
+    messages: messageReducer.messages,
+    isLoading: messageReducer.isLoading,
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({ sendMessage, loadMessages, loadChats }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageField);
